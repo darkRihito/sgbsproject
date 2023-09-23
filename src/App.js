@@ -1,24 +1,37 @@
-import logo from './logo.svg';
-import './App.css';
+import ReactDOM from "react-dom/client";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Home from "./pages/home/home";
+import Layout from "./pages/layout";
+import NoPage from "./pages/nopage";
+import "./App.css";
+import { useEffect } from "react";
 
-function App() {
+function App({ Component, pageProps }) {
+  useEffect(() => {
+    if (
+      localStorage.theme === "dark" ||
+      (!("theme" in localStorage) &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches)
+    ) {
+      //check if there is any key for theme in local storage and if the system color theme is dark
+      document.documentElement.classList.remove("light"); //OPTIONAL - remove light from the html document if any
+      document.documentElement.classList.add("dark"); // add dark to the <html></html> itself as <html class='dark'></html>
+    } else {
+      document.documentElement.classList.remove("dark"); // remove dark from the html document if any
+      document.documentElement.classList.add("light"); //OPTIONAL - add light to the <html></html> itself as <html class='light'></html>
+    }
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Layout {...pageProps}/>}> 
+          <Route index element={<Home />} />
+          {/* <Route path="/" element={< />} /> */}
+          <Route path="*" element={<NoPage />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 
